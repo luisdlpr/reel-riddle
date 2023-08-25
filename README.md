@@ -1,3 +1,11 @@
+## Dev Log
+### 25/08/2023
+Began development. This application will be a movie guessing game where given some details about a movie (plot, cast, year, genres etc) you guess the movie title. A single puzzle will be avaliable per day similar to games such as wordle. Hints like cast will be locked behind some sort of cooldown system or reduce the amount of points gained for solving the riddle. There will also be some sort of leaderboard mechanic showing the ladder of top players in the world and your score.
+
+I originally wanted the hints to be a few emoji's relating to the movie (kong vs godzilla would give the hint gorilla emoji, lizard emoji etc). Looking into emoji translation modules and doing some testing, attempts at auto generating these types of hints based on movie data were not good. Also looked into some machine learning or AI solutions but these seem overcomplicated or require payment etc and are not always 100% accurate. This could be done in the future, however decided that other hints could work better / be more fun.
+
+Set up as a next.js project with a simple sqlite database connected using prisma. Since the database requirements for this application are lightweight, this database should be fine. Was able to pull a list of popular movies from the TMDB API with all the required hint data and push to the database through an API endpoint. Need to look into how daily resets should work.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
