@@ -14,3 +14,17 @@ model Test {
   id       String @id @default(cuid())
   username String
 }
+
+model Movie {
+  id           String    @id @default(cuid())
+  tmdb_id      String    @unique
+  title        String
+  tagline      String
+  plot         String
+  poster_path  String
+  genres       String
+  producers    String
+  cast         String
+  release_date DateTime
+  played       DateTime?
+}

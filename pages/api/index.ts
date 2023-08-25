@@ -15,7 +15,6 @@ export default async function handler(
       res.status(200).json({ response: test });
       break;
     case "POST":
-      console.log(req.body);
       const rowData = req.body;
       const savedRow = await prisma.test.create({ data: rowData });
       res.status(200).json(savedRow);

@@ -8,8 +8,7 @@ export default async function handler(
   switch (method) {
     case "GET":
       // GET request: test
-      console.log(process.env.COOL);
-      if (process.env.COOL === "banana") {
+      if (req.query.password === process.env.COOL) {
         res.status(200).json({ response: "access granted" });
       } else {
         res.status(200).json({ response: "access denied" });
