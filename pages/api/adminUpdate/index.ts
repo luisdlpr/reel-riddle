@@ -2,21 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
 const TMDB_API = "https://api.themoviedb.org/3";
+const DAY_IN_MS = 86400000;
 const prisma = new PrismaClient();
-
-interface Cast {
-  adult: boolean;
-  gender: number;
-  id: number;
-  known_for_department: string;
-  name: string;
-  popularity: number;
-  profile_path: string;
-  cast_id: number;
-  character: string;
-  credit_id: string;
-  order: number;
-}
 
 const fetchToJson = async (url: string) => {
   const options: RequestInit = {
@@ -66,6 +53,10 @@ const pullMovies = async (res: NextApiResponse) => {
 
   await prisma.movie.deleteMany({});
 
+  // get current date with time set to midnight
+  let playDate = new Date(new Date(Date.now()).toDateString());
+  let dateOffset = 0;
+
   // no bulk add option for sqlite :(
   for (let movie of movieListResponseJSON.results) {
     if (movie.adult === false && movie.original_language === "en") {
@@ -99,9 +90,11 @@ const pullMovies = async (res: NextApiResponse) => {
           producers,
           cast,
           release_date: new Date(movie.release_date).toISOString(),
-          played: null,
+          played: new Date(playDate.getTime() + DAY_IN_MS * dateOffset),
         },
       });
+
+      dateOffset += 1;
     }
   }
 
@@ -124,10 +117,11 @@ export default async function handler(
 
   switch (method) {
     case "GET":
-      getMovies(res);
+      await getMovies(res);
       break;
     case "POST":
-      pullMovies(res);
+      await pullMovies(res);
+      // res.status(200).json({ response: "access granted" });
       break;
     default:
       // No matching method
