@@ -23,7 +23,7 @@ const getMovies = async (res: NextApiResponse) => {
   res.status(200).json({ response: data });
 };
 
-const pullMovies = async (res: NextApiResponse) => {
+export const pullMovies = async (res?: NextApiResponse) => {
   const extraDetailsToString = (
     element: { [key: string]: any },
     extraDetails: [string],
@@ -98,7 +98,9 @@ const pullMovies = async (res: NextApiResponse) => {
     }
   }
 
-  res.status(200).json({ response: "access granted" });
+  if (res) {
+    res.status(200).json({ response: "access granted" });
+  }
 };
 
 export default async function handler(
