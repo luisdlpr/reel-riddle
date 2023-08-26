@@ -10,11 +10,6 @@ datasource db {
   url      = "file:./movies.db"
 }
 
-model Test {
-  id       String @id @default(cuid())
-  username String
-}
-
 model Movie {
   id           String    @id @default(cuid())
   tmdb_id      String    @unique
