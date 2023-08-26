@@ -21,20 +21,6 @@ const getHintSpaces = (
   };
 };
 
-// const resetPuzzle = async () => {
-//   const options: RequestInit = {
-//     method: "POST",
-//     headers: {
-//       accept: "application/json",
-//     },
-//   };
-
-//   const res = await fetch("/api/adminUpdate?password=secure-password", options);
-//   const resJSON = await res.json();
-
-//   return resJSON;
-// };
-
 const getPuzzle = async (res: NextApiResponse) => {
   const puzzle = await prisma.movie.findFirst({
     where: {
@@ -58,6 +44,29 @@ const getPuzzle = async (res: NextApiResponse) => {
   return res.status(200).json({ ...puzzle, space_hints });
 };
 
+const postAnswer = async (req: NextApiRequest, res: NextApiResponse) => {
+  const ansData = req.body;
+  let answer = await prisma.movie.findFirst({
+    where: {
+      played: new Date(new Date(Date.now()).toDateString()),
+    },
+    select: {
+      title: true,
+      poster_path: true,
+    },
+  });
+
+  if (answer == null) {
+    res.status(500).json({ error: "active puzzle not found, please refresh" });
+  } else {
+    if (answer.title.toLowerCase() === ansData.title) {
+      res.status(200).json({ correct: true, ...answer });
+    } else {
+      res.status(200).json({ correct: false });
+    }
+  }
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -66,9 +75,11 @@ export default async function handler(
   switch (method) {
     case "GET":
       return getPuzzle(res);
+    case "POST":
+      return postAnswer(req, res);
     default:
       // No matching method
-      res.setHeader("Allow", ["GET"]);
+      res.setHeader("Allow", ["GET", "POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }

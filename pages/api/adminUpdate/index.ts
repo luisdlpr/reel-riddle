@@ -123,7 +123,6 @@ export default async function handler(
       break;
     case "POST":
       await pullMovies(res);
-      // res.status(200).json({ response: "access granted" });
       break;
     default:
       // No matching method
