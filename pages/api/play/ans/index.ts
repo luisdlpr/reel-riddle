@@ -18,16 +18,14 @@ export default async function handler(
       });
 
       if (puzzle == null) {
-        // some reset behaviour
-        return res
+        res
           .status(500)
           .json({ error: "active puzzle not found, please refresh" });
+      } else {
+        res
+          .status(200)
+          .json({ title: puzzle.title, poster_path: puzzle.poster_path });
       }
-
-      delete (puzzle as any).title;
-      delete (puzzle as any).poster_path;
-
-      res.status(200).json({ ...puzzle });
       break;
     case "POST":
       const rowData = req.body;
