@@ -28,9 +28,28 @@ export default async function handler(
       }
       break;
     case "POST":
-      const rowData = req.body;
-      const savedRow = await prisma.test.create({ data: rowData });
-      res.status(200).json(savedRow);
+      const ansData = req.body;
+      let answer = await prisma.movie.findFirst({
+        where: {
+          played: new Date(new Date(Date.now()).toDateString()),
+        },
+        select: {
+          title: true,
+          poster_path: true,
+        },
+      });
+
+      if (answer == null) {
+        res
+          .status(500)
+          .json({ error: "active puzzle not found, please refresh" });
+      } else {
+        if (answer.title.toLowerCase() === ansData.title) {
+          res.status(200).json({ correct: true, ...answer });
+        } else {
+          res.status(200).json({ correct: false });
+        }
+      }
       break;
     default:
       // No matching method
