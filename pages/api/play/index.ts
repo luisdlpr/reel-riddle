@@ -3,6 +3,23 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const getHintSpaces = (
+  title: string,
+): { spaces: number; blanks: number[] | [] } => {
+  let blanks = [];
+
+  for (let i = 0; i < title.length; i++) {
+    if (title[i] === " ") {
+      blanks.push(i);
+    }
+  }
+
+  return {
+    spaces: title.length,
+    blanks,
+  };
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -24,10 +41,12 @@ export default async function handler(
           .json({ error: "active puzzle not found, please refresh" });
       }
 
+      const space_hints = getHintSpaces(puzzle.title);
+
       delete (puzzle as any).title;
       delete (puzzle as any).poster_path;
 
-      res.status(200).json({ ...puzzle });
+      res.status(200).json({ ...puzzle, space_hints });
       break;
     case "POST":
       const rowData = req.body;
