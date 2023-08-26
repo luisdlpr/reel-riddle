@@ -59,7 +59,10 @@ const postAnswer = async (req: NextApiRequest, res: NextApiResponse) => {
   if (answer == null) {
     res.status(500).json({ error: "active puzzle not found, please refresh" });
   } else {
-    if (answer.title.toLowerCase() === ansData.title) {
+    console.log(ansData);
+    console.log(ansData.title);
+    console.log(answer.title.toLowerCase());
+    if (answer.title.toLowerCase() == ansData.title) {
       res.status(200).json({ correct: true, ...answer });
     } else {
       res.status(200).json({ correct: false });
