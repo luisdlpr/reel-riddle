@@ -1,8 +1,10 @@
 "use client";
-import React, { RefObject } from "react";
+import React, { RefObject, SetStateAction } from "react";
 
 type Props = {
   spaceHints: spaceHintsInt;
+  penalties: number;
+  setPenalties: React.Dispatch<SetStateAction<number>>;
 };
 interface spaceHintsInt {
   spaces: number;
@@ -14,7 +16,7 @@ interface inputArrayInt {
   ref?: RefObject<HTMLInputElement>;
 }
 
-export default function QuizInput({ spaceHints }: Props) {
+const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
   const [title, setTitle] = React.useState("");
   const [posterPath, setPosterPath] = React.useState("");
   const [inputArray, setInputArray] = React.useState<inputArrayInt[]>([]);
@@ -39,7 +41,7 @@ export default function QuizInput({ spaceHints }: Props) {
           setTitle(result.title);
           setPosterPath("https://image.tmdb.org/t/p/w500" + result.poster_path);
         } else {
-          // do nothing
+          setPenalties((prev) => prev + 1);
         }
       });
   };
@@ -118,27 +120,48 @@ export default function QuizInput({ spaceHints }: Props) {
     <div className="flex flex-col items-center justify-center">
       {title !== "" ? <h1>{title}</h1> : <h1>???</h1>}
       {posterPath !== "" ? (
-        <img src={posterPath} />
+        <img
+          src={posterPath}
+          className="rounded-lg"
+          style={{ width: "390px", height: "585px" }}
+        />
       ) : (
         <div
-          className="bg-black text-indigo-50 text-9xl flex items-center justify-center"
+          className="bg-black text-indigo-50 text-9xl flex items-center justify-center rounded-lg"
           style={{ width: "390px", height: "585px" }}
         >
           ?
         </div>
       )}
-      {inputArray.map((char, index) => {
-        return char.symbol === true ? (
-          <span> {char.input} </span>
-        ) : (
-          <input
-            maxLength={1}
-            ref={char.ref}
-            onKeyDown={(e) => handleFocus(e.keyCode, index)}
-          ></input>
-        );
-      })}
-      <button onClick={submitAnswer}>submit</button>
+      <div className="w-4/5 flex items-center justify-center flex-wrap">
+        {inputArray.map((char, index) => {
+          return char.symbol === true ? (
+            <span
+              className="w-4 h-4"
+              key={index}
+            >
+              {" "}
+              {char.input}{" "}
+            </span>
+          ) : (
+            <input
+              className="w-6 h-6 m-1 p-1 rounded"
+              maxLength={1}
+              ref={char.ref}
+              key={index}
+              onKeyDown={(e) => handleFocus(e.keyCode, index)}
+            ></input>
+          );
+        })}
+      </div>
+      <button
+        className="w-4/5 m-3 p-2 bg-indigo-700 rounded text-indigo-50"
+        onClick={submitAnswer}
+      >
+        Lock In
+      </button>
     </div>
   );
-}
+};
+
+export default QuizInput;
