@@ -11,7 +11,7 @@ class Puzzle {
   cast: { name: string; img_path: string }[];
   release_date: Date;
   played: Date;
-  space_hints: { spaces: number; blanks: [number] };
+  space_hints: { spaces: number; nonAlphas: [{ symbol: string; idx: number }] };
 
   constructor(puzzleJSON: { [key: string]: any }) {
     this.id = puzzleJSON.id;
@@ -72,7 +72,7 @@ export default async function Home() {
           </span>
         ))}
       </div>
-      <QuizInput />
+      <QuizInput spaceHints={puzzleData.space_hints} />
     </main>
   );
 }

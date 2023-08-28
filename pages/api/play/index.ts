@@ -6,18 +6,18 @@ const prisma = new PrismaClient();
 
 const getHintSpaces = (
   title: string,
-): { spaces: number; blanks: number[] | [] } => {
-  let blanks = [];
+): { spaces: number; nonAlphas: { symbol: string; idx: number }[] | [] } => {
+  let nonAlphas = [];
 
   for (let i = 0; i < title.length; i++) {
-    if (title[i] === " ") {
-      blanks.push(i);
+    if (!/^[A-Za-z]$/i.test(title[i])) {
+      nonAlphas.push({ symbol: title[i], idx: i });
     }
   }
 
   return {
     spaces: title.length,
-    blanks,
+    nonAlphas,
   };
 };
 
