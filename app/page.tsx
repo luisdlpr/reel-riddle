@@ -19,7 +19,7 @@ export default async function Home() {
   const { puzzleJSON } = await getPuzzle();
 
   return (
-    <main className="text-center">
+    <main className="text-center flex flex-col items-center">
       <h1 className="text-5xl m-4">Reed Riddle 🎬</h1>
       <PuzzleUI puzzleJSON={puzzleJSON} />
     </main>

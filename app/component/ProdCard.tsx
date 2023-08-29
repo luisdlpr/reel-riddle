@@ -4,7 +4,7 @@ export default function ProdCard({
   prodCompany: { name: string; img_path: string };
 }) {
   return (
-    <div className="flex flex-col w-1/4 m-2 p-2 rounded-xl bg-indigo-900 align-center justify-center">
+    <div className="flex flex-col w-1/4 m-2 p-2 rounded-xl bg-indigo-700 align-center justify-center">
       <img
         className="rounded-xl"
         src={"https://image.tmdb.org/t/p/w500" + prodCompany.img_path}

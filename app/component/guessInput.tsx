@@ -117,18 +117,18 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      {title !== "" ? <h1>{title}</h1> : <h1>???</h1>}
+    <div className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 shadow-inner">
+      <h1 className="text-xl m-3">{title !== "" ? title : "???"}</h1>
       {posterPath !== "" ? (
         <img
           src={posterPath}
-          className="rounded-lg"
-          style={{ width: "390px", height: "585px" }}
+          className="rounded-lg drop-shadow"
+          style={{ width: "305px", height: "500px" }}
         />
       ) : (
         <div
-          className="bg-black text-indigo-50 text-9xl flex items-center justify-center rounded-lg"
-          style={{ width: "390px", height: "585px" }}
+          className="bg-black text-indigo-50 text-9xl flex items-center justify-center rounded-lg drop-shadow"
+          style={{ width: "305px", height: "500px" }}
         >
           ?
         </div>
@@ -145,7 +145,7 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
             </span>
           ) : (
             <input
-              className="w-6 h-6 m-1 p-1 rounded"
+              className="w-6 h-6 m-1 p-1 rounded drop-shadow"
               maxLength={1}
               ref={char.ref}
               key={index}
@@ -155,7 +155,7 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
         })}
       </div>
       <button
-        className="w-4/5 m-3 p-2 bg-indigo-700 rounded text-indigo-50"
+        className="w-4/5 m-3 p-2 rounded-xl border-2 border-solid border-indigo-950 bg-indigo-400 text-indigo-50"
         onClick={submitAnswer}
       >
         Lock In
