@@ -6,18 +6,18 @@ const prisma = new PrismaClient();
 
 const getHintSpaces = (
   title: string,
-): { spaces: number; blanks: number[] | [] } => {
-  let blanks = [];
+): { spaces: number; nonAlphas: { symbol: string; idx: number }[] | [] } => {
+  let nonAlphas = [];
 
   for (let i = 0; i < title.length; i++) {
-    if (title[i] === " ") {
-      blanks.push(i);
+    if (!/^[A-Za-z]$/i.test(title[i])) {
+      nonAlphas.push({ symbol: title[i], idx: i });
     }
   }
 
   return {
     spaces: title.length,
-    blanks,
+    nonAlphas,
   };
 };
 
@@ -59,7 +59,10 @@ const postAnswer = async (req: NextApiRequest, res: NextApiResponse) => {
   if (answer == null) {
     res.status(500).json({ error: "active puzzle not found, please refresh" });
   } else {
-    if (answer.title.toLowerCase() === ansData.title) {
+    console.log(ansData);
+    console.log(ansData.title);
+    console.log(answer.title.toLowerCase());
+    if (answer.title.toLowerCase() == ansData.title) {
       res.status(200).json({ correct: true, ...answer });
     } else {
       res.status(200).json({ correct: false });
