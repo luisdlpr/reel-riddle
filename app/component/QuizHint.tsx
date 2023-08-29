@@ -14,6 +14,15 @@ export default function QuizHint({
 }) {
   const [show, toggleShow] = React.useState(false);
 
+  React.useEffect(() => {
+    if (
+      window.localStorage.getItem(name) === new Date(Date.now()).toDateString()
+    ) {
+      applyPenalty(cost);
+      toggleShow(true);
+    }
+  }, []);
+
   return (
     <section>
       {show ? (
@@ -37,6 +46,10 @@ export default function QuizHint({
             onClick={() => {
               applyPenalty(cost);
               toggleShow(true);
+              window.localStorage.setItem(
+                name,
+                new Date(Date.now()).toDateString(),
+              );
             }}
           >
             Click to show {name} info (cost {cost} points)
