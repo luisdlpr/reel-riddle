@@ -44,6 +44,14 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
       setTitle(lastWinJSON.title);
       setPosterPath(lastWinJSON.posterPath);
     }
+
+    let localAttempts = window.localStorage.getItem(
+      new Date(Date.now()).toDateString(),
+    );
+
+    if (localAttempts) {
+      applyPenalty(parseInt(localAttempts));
+    }
   }, []);
 
   const setWin = (setLocal: boolean, title?: string, posterPath?: string) => {
@@ -87,6 +95,24 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
     }
   };
 
+  const incrementAttempts = () => {
+    const localAttempts = window.localStorage.getItem(
+      new Date(Date.now()).toDateString(),
+    );
+
+    if (localAttempts) {
+      window.localStorage.setItem(
+        new Date(Date.now()).toDateString(),
+        (parseInt(localAttempts) + 1).toString(),
+      );
+    } else {
+      window.localStorage.setItem(
+        new Date(Date.now()).toDateString(),
+        (1).toString(),
+      );
+    }
+  };
+
   const submitAnswer = () => {
     if (!winState) {
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/play`, {
@@ -110,6 +136,7 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
           } else {
             showIncorrect();
             applyPenalty(1);
+            incrementAttempts();
           }
         });
     }
