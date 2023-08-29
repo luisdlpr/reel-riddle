@@ -1,15 +1,12 @@
 "use client";
 
 import React from "react";
-import CastCard from "./CastCard";
-import QuizInput from "./guessInput";
+import QuizInput from "./QuizInput";
 import Puzzle from "../PuzzleClass";
-import ProdCard from "./ProdCard";
+import QuizHint from "./QuizHint";
 
 export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
   const puzzleData = new Puzzle(puzzleJSON);
-  const [showCast, toggleShowCast] = React.useState<boolean>(false);
-  const [showProd, toggleShowProd] = React.useState<boolean>(false);
   const [penalties, setPenalties] = React.useState<number>(0);
   const pointsIndicator = React.useRef<HTMLHeadingElement>(null);
 
@@ -28,7 +25,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
       <QuizInput
         spaceHints={puzzleData.space_hints}
         penalties={penalties}
-        setPenalties={setPenalties}
+        applyPenalty={applyPenalty}
       />
       <div className="w-11/12 flex flex-col items-center justify-center">
         <h1
@@ -55,57 +52,18 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
             </span>
           ))}
         </div>
-        {showCast ? (
-          <div className="flex flex-wrap align-center justify-center max-w-sm">
-            {puzzleData.cast.map((actor) => {
-              return (
-                <CastCard
-                  key={actor.name}
-                  castMember={actor}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          <div>
-            <button
-              className="m-2 p-2 rounded-xl border-2 border-solid border-indigo-950 bg-indigo-400 text-indigo-50"
-              onClick={() => {
-                applyPenalty(2);
-                toggleShowCast(true);
-              }}
-            >
-              Click to show casting info (cost 2 points)
-            </button>
-          </div>
-        )}
-        {showProd ? (
-          <div className="flex flex-wrap align-center justify-center max-w-sm">
-            {puzzleData.producers
-              .filter((producer) => producer.img_path)
-              .slice(0, 3)
-              .map((producer) => {
-                return (
-                  <ProdCard
-                    key={producer.name}
-                    prodCompany={producer}
-                  />
-                );
-              })}
-          </div>
-        ) : (
-          <div>
-            <button
-              className="m-2 p-2 rounded-xl border-2 border-solid border-indigo-950 bg-indigo-400 text-indigo-50"
-              onClick={() => {
-                applyPenalty(2);
-                toggleShowProd(true);
-              }}
-            >
-              Click to show producer info (cost 2 points)
-            </button>
-          </div>
-        )}
+        <QuizHint
+          info={puzzleData.cast}
+          applyPenalty={applyPenalty}
+          name="casting"
+          cost={2}
+        />
+        <QuizHint
+          info={puzzleData.producers}
+          applyPenalty={applyPenalty}
+          name="producers"
+          cost={2}
+        />
       </div>
     </div>
   );
