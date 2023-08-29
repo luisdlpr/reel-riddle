@@ -1,22 +1,24 @@
 "use client";
-import React, { RefObject, SetStateAction } from "react";
+import React from "react";
 
 type Props = {
   spaceHints: spaceHintsInt;
   penalties: number;
-  setPenalties: React.Dispatch<SetStateAction<number>>;
+  applyPenalty: (amount: number) => void;
 };
+
 interface spaceHintsInt {
   spaces: number;
   nonAlphas: [{ symbol: string; idx: number }];
 }
+
 interface inputArrayInt {
   symbol: boolean;
   input: string;
-  ref?: RefObject<HTMLInputElement>;
+  ref?: React.RefObject<HTMLInputElement>;
 }
 
-const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
+const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
   const [title, setTitle] = React.useState("");
   const [posterPath, setPosterPath] = React.useState("");
   const [inputArray, setInputArray] = React.useState<inputArrayInt[]>([]);
@@ -33,6 +35,7 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
       },
       body: JSON.stringify({
         title: getAnswer(),
+        score: Math.max(0, 10 - penalties),
       }),
     })
       .then((response) => response.json())
@@ -41,13 +44,15 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
           setTitle(result.title);
           setPosterPath("https://image.tmdb.org/t/p/w500" + result.poster_path);
         } else {
-          setPenalties((prev) => prev + 1);
+          applyPenalty(1);
         }
       });
   };
 
   const generateInputArray = (spaceHints: spaceHintsInt): inputArrayInt[] => {
     let inputArray = [];
+
+    // fill array of length spaceHints.spaces with default inputtable
     for (let i = 0; i < spaceHints.spaces; i++) {
       inputArray.push({
         symbol: false,
@@ -55,6 +60,8 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
         ref: React.createRef<HTMLInputElement>(),
       });
     }
+
+    // for any nonAlpha characters, replace with a prefilled
     for (let hint of spaceHints.nonAlphas) {
       inputArray[hint.idx] = { symbol: true, input: hint.symbol };
     }
@@ -63,44 +70,58 @@ const QuizInput = ({ spaceHints, penalties, setPenalties }: Props) => {
   };
 
   const handleFocus = (input: number, curIndex: number) => {
-    let direction = 1;
-    if (input === 8) {
-      direction = -1;
-    }
-
-    if (inputArray[curIndex] && inputArray[curIndex].ref != undefined) {
-      const curIndexRef = inputArray[curIndex].ref || null;
-      if (
-        curIndexRef &&
-        curIndexRef.current &&
-        curIndexRef.current.value.length === 0 &&
-        direction === 1
-      ) {
-        return;
+    const LEFT_ARROW = 37;
+    const RIGHT_ARROW = 39;
+    const BACKSPACE = 8;
+    const FORWARD = 1;
+    const BACKWARD = -1;
+    const shouldMoveFocus = (direction: number, idx: number) => {
+      if (inputArray[idx] && inputArray[idx].ref != undefined) {
+        const curIndexRef = inputArray[idx].ref || null;
+        if (
+          curIndexRef &&
+          curIndexRef.current &&
+          curIndexRef.current.value.length === 0 &&
+          direction === FORWARD
+        ) {
+          return false;
+        } else if (
+          curIndexRef &&
+          curIndexRef.current &&
+          curIndexRef.current.value.length !== 0 &&
+          direction === BACKWARD
+        ) {
+          return false;
+        } else {
+          return true;
+        }
       }
-      if (
-        curIndexRef &&
-        curIndexRef.current &&
-        curIndexRef.current.value.length !== 0 &&
-        direction === -1
-      ) {
-        return;
-      }
-    }
+    };
+    const inBounds = (index: number) => {
+      return !(index >= spaceHints.spaces || index < 0);
+    };
 
+    let direction = FORWARD;
+    if (input === BACKSPACE) {
+      direction = BACKWARD;
+    } else if (input === LEFT_ARROW || input === RIGHT_ARROW) {
+      return; // ignore left or right arrow input
+    }
     let index = curIndex + direction;
 
-    if (index >= spaceHints.spaces || index < 0) {
-      return;
-    }
-
-    if (inputArray && inputArray[index] && inputArray[index].ref != undefined) {
-      const inputArrayRef = inputArray[index].ref || null;
-      if (inputArrayRef && inputArrayRef.current) {
-        inputArrayRef.current.focus();
+    if (shouldMoveFocus(direction, curIndex) && inBounds(index)) {
+      if (
+        inputArray &&
+        inputArray[index] &&
+        inputArray[index].ref != undefined
+      ) {
+        const inputArrayRef = inputArray[index].ref || null;
+        if (inputArrayRef && inputArrayRef.current) {
+          inputArrayRef.current.focus();
+        }
+      } else {
+        handleFocus(input, index);
       }
-    } else {
-      handleFocus(input, index);
     }
   };
 
