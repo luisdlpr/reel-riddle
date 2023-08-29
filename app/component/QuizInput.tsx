@@ -71,6 +71,22 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
     setWinState(true);
   };
 
+  const showIncorrect = () => {
+    if (submitButton.current) {
+      submitButton.current.classList.add("bg-red-400");
+      submitButton.current.classList.remove("bg-indigo-400");
+      submitButton.current.innerText = "Incorrect ❌";
+
+      setTimeout(() => {
+        if (submitButton.current) {
+          submitButton.current.classList.add("bg-indigo-400");
+          submitButton.current.classList.remove("bg-red-400");
+          submitButton.current.innerText = "Lock In";
+        }
+      }, 1000);
+    }
+  };
+
   const submitAnswer = () => {
     if (!winState) {
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/play`, {
@@ -92,6 +108,7 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
             setPosterPath(fullPosterPath);
             setWin(true, result.title, fullPosterPath);
           } else {
+            showIncorrect();
             applyPenalty(1);
           }
         });
