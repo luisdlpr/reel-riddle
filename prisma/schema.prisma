@@ -23,3 +23,11 @@ model Movie {
   release_date DateTime
   played       DateTime?
 }
+
+model Player {
+  id         String    @id @default(cuid())
+  username   String    @unique
+  password   String
+  score      Int
+  lastPlayed DateTime?
+}
