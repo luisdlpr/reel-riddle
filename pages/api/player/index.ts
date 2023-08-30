@@ -10,7 +10,8 @@ const logIn = async (req: NextApiRequest, res: NextApiResponse) => {
     !(
       requestData.username &&
       requestData.password &&
-      typeof requestData.username === "string"
+      typeof requestData.username === "string" &&
+      typeof requestData.password === "string"
     )
   ) {
     return res.status(500).json({ error: "payload invalid." });
@@ -19,7 +20,7 @@ const logIn = async (req: NextApiRequest, res: NextApiResponse) => {
   let answer = await prisma.player.findFirst({
     where: {
       username: requestData.username,
-      password: md5(requestData.password),
+      password: requestData.password,
     },
     select: {
       id: true,
@@ -34,7 +35,11 @@ const logIn = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const signUp = async (req: NextApiRequest, res: NextApiResponse) => {
-  const requestData = req.body;
+  const requestData = JSON.parse(req.body);
+
+  console.log(requestData);
+  console.log(requestData.username);
+  console.log(requestData.password);
 
   if (!(requestData.username && requestData.password)) {
     return res.status(500).json({ error: "payload invalid." });
@@ -49,17 +54,19 @@ const signUp = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
+  console.log(answer);
+
   if (answer != null) {
     return res.status(500).json({ error: "username taken." });
   } else {
-    await prisma.player.create({
+    const newPlayer = await prisma.player.create({
       data: {
         username: requestData.username,
-        password: md5(requestData.password),
+        password: requestData.password,
         score: 0,
       },
     });
-    return res.status(200).json({ status: "account created." });
+    return res.status(200).json({ token: newPlayer.id });
   }
 };
 

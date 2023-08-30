@@ -2,7 +2,7 @@
 
 import React from "react";
 import QuizInput from "./QuizInput";
-import Puzzle from "../PuzzleClass";
+import Puzzle from "../../PuzzleClass";
 import QuizHint from "./QuizHint";
 
 export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
