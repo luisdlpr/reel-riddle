@@ -232,7 +232,7 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
   return (
     <div
       ref={containerDiv}
-      className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 shadow-inner"
+      className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 p-2 shadow-inner"
     >
       <h1 className="text-xl m-3">{title !== "" ? title : "???"}</h1>
       {posterPath !== "" ? (
