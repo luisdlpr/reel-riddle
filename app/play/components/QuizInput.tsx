@@ -115,15 +115,21 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
 
   const submitAnswer = () => {
     if (!winState) {
+      let payload: { title: string; score: number; token?: string } = {
+        title: getAnswer(),
+        score: Math.max(0, 10 - penalties),
+      };
+
+      if (window.localStorage.getItem("token")) {
+        payload.token = window.localStorage.getItem("token") || undefined;
+      }
+
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/play`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title: getAnswer(),
-          score: Math.max(0, 10 - penalties),
-        }),
+        body: JSON.stringify(payload),
       })
         .then((response) => response.json())
         .then((result) => {

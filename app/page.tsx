@@ -102,7 +102,10 @@ export default function Home() {
         )}
         {signup && <PlayerForm handleSubmit={signupHandler} />}
         {!(signup || login) && (
-          <button className="p-2 m-2 w-full rounded-xl bg-indigo-100 text-indigo-950">
+          <button
+            className="p-2 m-2 w-full rounded-xl bg-indigo-100 text-indigo-950"
+            onClick={() => (window.location.href = "/play?guest=true")}
+          >
             Continue As Guest (Score will not be saved)
           </button>
         )}

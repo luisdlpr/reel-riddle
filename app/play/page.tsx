@@ -4,6 +4,7 @@ import PuzzleUI from "./components/PuzzleUI";
 const getPuzzle = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/play`, {
     method: "GET",
+    cache: "no-store",
   });
 
   if (!res.ok) {

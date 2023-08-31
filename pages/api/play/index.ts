@@ -59,10 +59,32 @@ const postAnswer = async (req: NextApiRequest, res: NextApiResponse) => {
   if (answer == null) {
     res.status(500).json({ error: "active puzzle not found, please refresh" });
   } else {
-    console.log(ansData);
-    console.log(ansData.title);
-    console.log(answer.title.toLowerCase());
     if (answer.title.toLowerCase() == ansData.title) {
+      if (ansData.token) {
+        let playerData = await prisma.player.findUnique({
+          where: {
+            id: ansData.token,
+          },
+        });
+
+        if (playerData == null) {
+          return res
+            .status(500)
+            .json({ error: "player account not found, please refresh" });
+        }
+
+        let update = await prisma.player.update({
+          where: {
+            id: ansData.token,
+          },
+          data: {
+            score: ansData.score + playerData.score,
+            lastPlayed: new Date(Date.now()),
+          },
+        });
+
+        console.log(update);
+      }
       res.status(200).json({ correct: true, ...answer });
     } else {
       res.status(200).json({ correct: false });
