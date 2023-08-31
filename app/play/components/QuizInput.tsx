@@ -1,4 +1,5 @@
 "use client";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Props = {
@@ -25,9 +26,36 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
   const [inputArray, setInputArray] = React.useState<inputArrayInt[]>([]);
   const containerDiv = React.useRef<HTMLDivElement>(null);
   const submitButton = React.useRef<HTMLButtonElement>(null);
+  const searchParams = useSearchParams();
 
   React.useEffect(() => {
     setInputArray(generateInputArray(spaceHints));
+
+    if (
+      !(searchParams && searchParams.get("guest")) &&
+      window.localStorage.getItem("token")
+    ) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/player/check_win` +
+          `?token=${window.localStorage.getItem("token")}&date=${new Date(
+            Date.now(),
+          ).toDateString()}`,
+        {
+          method: "GET",
+        },
+      )
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.answer !== "none") {
+            setWin(false);
+            setWinState(true);
+            setTitle(json.answer.title);
+            setPosterPath(
+              "https://image.tmdb.org/t/p/w500" + json.answer.poster_path,
+            );
+          }
+        });
+    }
 
     let lastWin = window.localStorage.getItem("won");
     let lastWinJSON;
