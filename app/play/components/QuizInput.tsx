@@ -240,16 +240,18 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
       ref={containerDiv}
       className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 p-2 shadow-inner"
     >
-      <h1 className="text-xl m-3">{title !== "" ? title : "???"}</h1>
+      <h1 className="text-xl m-3 w-80">{title !== "" ? title : "???"}</h1>
       {posterPath !== "" ? (
         <img
           src={posterPath}
-          className="rounded-lg drop-shadow"
+          className="rounded-lg drop-shadow object-cover w-80"
+          width={"305px"}
+          height={"500px"}
           style={{ width: "305px", height: "500px" }}
         />
       ) : (
         <div
-          className="bg-black text-indigo-50 text-9xl flex items-center justify-center rounded-lg drop-shadow"
+          className="bg-black text-indigo-50 text-9xl flex w-80 items-center justify-center rounded-lg drop-shadow"
           style={{ width: "305px", height: "500px" }}
         >
           ?
