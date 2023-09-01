@@ -1,4 +1,5 @@
 "use client";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Props = {
@@ -25,9 +26,36 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
   const [inputArray, setInputArray] = React.useState<inputArrayInt[]>([]);
   const containerDiv = React.useRef<HTMLDivElement>(null);
   const submitButton = React.useRef<HTMLButtonElement>(null);
+  const searchParams = useSearchParams();
 
   React.useEffect(() => {
     setInputArray(generateInputArray(spaceHints));
+
+    if (
+      !(searchParams && searchParams.get("guest")) &&
+      window.localStorage.getItem("token")
+    ) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/player/check_win` +
+          `?token=${window.localStorage.getItem("token")}&date=${new Date(
+            Date.now(),
+          ).toDateString()}`,
+        {
+          method: "GET",
+        },
+      )
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.answer !== "none") {
+            setWin(false);
+            setWinState(true);
+            setTitle(json.answer.title);
+            setPosterPath(
+              "https://image.tmdb.org/t/p/w500" + json.answer.poster_path,
+            );
+          }
+        });
+    }
 
     let lastWin = window.localStorage.getItem("won");
     let lastWinJSON;
@@ -115,15 +143,21 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
 
   const submitAnswer = () => {
     if (!winState) {
+      let payload: { title: string; score: number; token?: string } = {
+        title: getAnswer(),
+        score: Math.max(0, 10 - penalties),
+      };
+
+      if (window.localStorage.getItem("token")) {
+        payload.token = window.localStorage.getItem("token") || undefined;
+      }
+
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/play`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title: getAnswer(),
-          score: Math.max(0, 10 - penalties),
-        }),
+        body: JSON.stringify(payload),
       })
         .then((response) => response.json())
         .then((result) => {
@@ -232,18 +266,20 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
   return (
     <div
       ref={containerDiv}
-      className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 shadow-inner"
+      className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 p-2 shadow-inner"
     >
-      <h1 className="text-xl m-3">{title !== "" ? title : "???"}</h1>
+      <h1 className="text-xl m-3 w-80">{title !== "" ? title : "???"}</h1>
       {posterPath !== "" ? (
         <img
           src={posterPath}
-          className="rounded-lg drop-shadow"
+          className="rounded-lg drop-shadow object-cover w-80"
+          width={"305px"}
+          height={"500px"}
           style={{ width: "305px", height: "500px" }}
         />
       ) : (
         <div
-          className="bg-black text-indigo-50 text-9xl flex items-center justify-center rounded-lg drop-shadow"
+          className="bg-black text-indigo-50 text-9xl flex w-80 items-center justify-center rounded-lg drop-shadow"
           style={{ width: "305px", height: "500px" }}
         >
           ?

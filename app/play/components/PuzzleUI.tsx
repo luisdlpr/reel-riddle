@@ -2,13 +2,24 @@
 
 import React from "react";
 import QuizInput from "./QuizInput";
-import Puzzle from "../PuzzleClass";
+import Puzzle from "../../PuzzleClass";
 import QuizHint from "./QuizHint";
+import { useSearchParams } from "next/navigation";
 
 export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
   const puzzleData = new Puzzle(puzzleJSON);
   const [penalties, setPenalties] = React.useState<number>(0);
   const pointsIndicator = React.useRef<HTMLHeadingElement>(null);
+  const searchParams = useSearchParams();
+
+  React.useEffect(() => {
+    if (
+      !(searchParams && searchParams.get("guest")) &&
+      window.localStorage.getItem("token") == null
+    ) {
+      window.location.href = "/play?guest=true";
+    }
+  }, []);
 
   const applyPenalty = (amount: number) => {
     pointsIndicator.current?.classList.add("bg-red-700");
