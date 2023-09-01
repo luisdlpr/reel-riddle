@@ -4,6 +4,7 @@ import React from "react";
 import QuizInput from "./QuizInput";
 import Puzzle from "../../PuzzleClass";
 import QuizHint from "./QuizHint";
+import LeaderBoard from "./LeaderBoard";
 import { useSearchParams } from "next/navigation";
 
 export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
@@ -46,7 +47,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
       />
       <div className="w-11/12 flex flex-col items-center justify-center">
         {leaderboard ? (
-          <h1> hello world </h1>
+          <LeaderBoard />
         ) : (
           <div>
             <h1
