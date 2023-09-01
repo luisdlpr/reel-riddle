@@ -45,41 +45,49 @@ export default function LeaderBoard() {
   return (
     <section className="max-w-xl flex flex-col items-center justify-center">
       {leaderboard != null && (
-        <table className="w-3/5 table-fixed">
+        <table className="min-w-fit table-fixed bg-indigo-100 shadow-lg">
           <thead>
             <tr>
-              <th>rank</th>
-              <th>user</th>
-              <th>score</th>
+              <th className="bg-indigo-300 border text-left px-8 py-4">Rank</th>
+              <th className="bg-indigo-300 border text-left px-8 py-4">User</th>
+              <th className="bg-indigo-300 border text-left px-8 py-4">
+                Score
+              </th>
             </tr>
           </thead>
           <tbody>
             {leaderboard.map((entry) => (
               <tr key={entry.username}>
-                <td>#{entry.rank}</td>
-                <td>{entry.username}</td>
-                <td>{entry.score}</td>
+                <td className="border px-8 py-4 text-left">#{entry.rank}</td>
+                <td className="border px-8 py-4 text-left">{entry.username}</td>
+                <td className="border px-8 py-4 text-left">{entry.score}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
       {player == null || player.response == null ? (
-        <h1 className="mt-3">Make an account to join the leaderboard!</h1>
+        <h1 className="mt-5">Make an account to join the leaderboard!</h1>
       ) : (
-        <table className="w-3/5 table-fixed">
+        <table className="mt-5 min-w-fit table-fixed bg-indigo-100 shadow-lg">
           <thead>
             <tr>
-              <th>rank</th>
-              <th>user</th>
-              <th>score</th>
+              <th className="bg-indigo-300 border text-left px-8 py-4">Rank</th>
+              <th className="bg-indigo-300 border text-left px-8 py-4">User</th>
+              <th className="bg-indigo-300 border text-left px-8 py-4">
+                Score
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>#{player.rank}</td>
-              <td>{player.response.username}</td>
-              <td>{player.response.score}</td>
+              <td className="border px-8 py-4 text-left">#{player.rank}</td>
+              <td className="border px-8 py-4 text-left">
+                {player.response.username}
+              </td>
+              <td className="border px-8 py-4 text-left">
+                {player.response.score}
+              </td>
             </tr>
           </tbody>
         </table>

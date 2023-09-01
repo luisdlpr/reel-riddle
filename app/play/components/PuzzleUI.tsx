@@ -52,7 +52,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
           <div>
             <h1
               ref={pointsIndicator}
-              className="text-3xl mb-3 p-3 bg-indigo-700 rounded-xl text-indigo-50 inner-shadow"
+              className="text-3xl m-3 p-3 bg-indigo-700 rounded-xl text-indigo-50 inner-shadow"
             >
               Points {Math.max(0, 10 - penalties)}
             </h1>
