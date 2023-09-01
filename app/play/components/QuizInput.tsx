@@ -6,6 +6,7 @@ type Props = {
   spaceHints: spaceHintsInt;
   penalties: number;
   applyPenalty: (amount: number) => void;
+  showLeaderBoard: () => void;
 };
 
 interface spaceHintsInt {
@@ -19,7 +20,12 @@ interface inputArrayInt {
   ref?: React.RefObject<HTMLInputElement>;
 }
 
-const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
+const QuizInput = ({
+  spaceHints,
+  penalties,
+  applyPenalty,
+  showLeaderBoard,
+}: Props) => {
   const [winState, setWinState] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [posterPath, setPosterPath] = React.useState("");
@@ -105,6 +111,7 @@ const QuizInput = ({ spaceHints, penalties, applyPenalty }: Props) => {
       submitButton.current.onclick = null;
     }
     setWinState(true);
+    showLeaderBoard();
   };
 
   const showIncorrect = () => {
