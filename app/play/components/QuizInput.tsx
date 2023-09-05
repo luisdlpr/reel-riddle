@@ -34,6 +34,32 @@ const QuizInput = ({
   const submitButton = React.useRef<HTMLButtonElement>(null);
   const searchParams = useSearchParams();
 
+  const setWin = (setLocal: boolean, title?: string, posterPath?: string) => {
+    if (setLocal && title && posterPath) {
+      window.localStorage.setItem(
+        "won",
+        JSON.stringify({
+          date: new Date(Date.now()).toDateString(),
+          title,
+          posterPath,
+        }),
+      );
+    }
+    if (containerDiv.current) {
+      containerDiv.current.classList.add("bg-green-200");
+      containerDiv.current.classList.remove("bg-indigo-200");
+    }
+    if (submitButton.current) {
+      submitButton.current.classList.add("bg-green-400");
+      submitButton.current.classList.add("disabled");
+      submitButton.current.classList.remove("bg-indigo-400");
+      submitButton.current.innerText = "Correct ✅";
+      submitButton.current.onclick = null;
+    }
+    setWinState(true);
+    showLeaderBoard();
+  };
+
   React.useEffect(() => {
     setInputArray(generateInputArray(spaceHints));
 
@@ -86,33 +112,7 @@ const QuizInput = ({
     if (localAttempts) {
       applyPenalty(parseInt(localAttempts));
     }
-  }, []);
-
-  const setWin = (setLocal: boolean, title?: string, posterPath?: string) => {
-    if (setLocal && title && posterPath) {
-      window.localStorage.setItem(
-        "won",
-        JSON.stringify({
-          date: new Date(Date.now()).toDateString(),
-          title,
-          posterPath,
-        }),
-      );
-    }
-    if (containerDiv.current) {
-      containerDiv.current.classList.add("bg-green-200");
-      containerDiv.current.classList.remove("bg-indigo-200");
-    }
-    if (submitButton.current) {
-      submitButton.current.classList.add("bg-green-400");
-      submitButton.current.classList.add("disabled");
-      submitButton.current.classList.remove("bg-indigo-400");
-      submitButton.current.innerText = "Correct ✅";
-      submitButton.current.onclick = null;
-    }
-    setWinState(true);
-    showLeaderBoard();
-  };
+  }, [applyPenalty, searchParams, spaceHints]);
 
   const showIncorrect = () => {
     if (submitButton.current) {
@@ -273,12 +273,13 @@ const QuizInput = ({
   return (
     <div
       ref={containerDiv}
-      className="flex flex-col gap-3 items-center justify-center bg-indigo-200 rounded-lg m-2 p-2 shadow-inner"
+      className="flex flex-col gap-3 items-center justify-center m-2 p-2"
     >
       <h1 className="text-xl m-3 w-80">{title !== "" ? title : "???"}</h1>
       {posterPath !== "" ? (
         <img
           src={posterPath}
+          alt="correct answer poster"
           className="rounded-lg drop-shadow object-cover w-80"
           width={"305px"}
           height={"500px"}
@@ -295,10 +296,7 @@ const QuizInput = ({
       <div className="w-4/5 flex items-center justify-center flex-wrap">
         {inputArray.map((char, index) => {
           return char.symbol === true ? (
-            <span
-              className="w-4 h-4"
-              key={index}
-            >
+            <span className="w-4 h-4" key={index}>
               {" "}
               {char.input}{" "}
             </span>
@@ -318,7 +316,7 @@ const QuizInput = ({
         onClick={submitAnswer}
         ref={submitButton}
       >
-        Lock In
+        Guess
       </button>
     </div>
   );

@@ -26,17 +26,12 @@ export default function QuizHint({
   return (
     <section>
       {show ? (
-        <div className="flex flex-wrap align-center justify-center max-w-sm">
+        <div className="flex flex-wrap align-center justify-center max-w-xl">
           {info
             .filter((element) => element.img_path)
             .slice(0, 3)
             .map((element) => {
-              return (
-                <HintCard
-                  key={element.name}
-                  hintInfo={element}
-                />
-              );
+              return <HintCard key={element.name} hintInfo={element} />;
             })}
         </div>
       ) : (

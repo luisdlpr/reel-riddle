@@ -44,6 +44,7 @@ export default function LeaderBoard() {
 
   return (
     <section className="max-w-xl flex flex-col items-center justify-center">
+      <h1 className="text-xl m-2">Top Scorers</h1>
       {leaderboard != null && (
         <table className="min-w-fit table-fixed bg-indigo-100 shadow-lg">
           <thead>
@@ -69,28 +70,35 @@ export default function LeaderBoard() {
       {player == null || player.response == null ? (
         <h1 className="mt-5">Make an account to join the leaderboard!</h1>
       ) : (
-        <table className="mt-5 min-w-fit table-fixed bg-indigo-100 shadow-lg">
-          <thead>
-            <tr>
-              <th className="bg-indigo-300 border text-left px-8 py-4">Rank</th>
-              <th className="bg-indigo-300 border text-left px-8 py-4">User</th>
-              <th className="bg-indigo-300 border text-left px-8 py-4">
-                Score
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border px-8 py-4 text-left">#{player.rank}</td>
-              <td className="border px-8 py-4 text-left">
-                {player.response.username}
-              </td>
-              <td className="border px-8 py-4 text-left">
-                {player.response.score}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <>
+          <h1 className="text-xl mt-5 m-2">Your Rank</h1>
+          <table className="min-w-fit table-fixed bg-indigo-100 shadow-lg">
+            <thead>
+              <tr>
+                <th className="bg-indigo-300 border text-left px-8 py-4">
+                  Rank
+                </th>
+                <th className="bg-indigo-300 border text-left px-8 py-4">
+                  User
+                </th>
+                <th className="bg-indigo-300 border text-left px-8 py-4">
+                  Score
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border px-8 py-4 text-left">#{player.rank}</td>
+                <td className="border px-8 py-4 text-left">
+                  {player.response.username}
+                </td>
+                <td className="border px-8 py-4 text-left">
+                  {player.response.score}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </>
       )}
     </section>
   );
