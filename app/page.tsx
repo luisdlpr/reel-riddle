@@ -81,7 +81,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center h-screen">
+    <main className="m-4 flex flex-col items-center justify-center h-screen">
       <div className="bg-indigo-700 flex flex-col items-center justify-center text-indigo-50 p-3 rounded-xl">
         <h1 className={`${bungee.className} text-center text-5xl m-4`}>
           Reed Riddle 🎬
