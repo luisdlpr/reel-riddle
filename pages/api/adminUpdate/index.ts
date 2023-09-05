@@ -47,54 +47,55 @@ export const pullMovies = async (res?: NextApiResponse) => {
     return detailsString.join(", ");
   };
 
-  const movieListResponseJSON = await fetchToJson(
-    "/movie/popular?language=en-US&page=1",
-  );
-
   await prisma.movie.deleteMany({});
 
   // get current date with time set to midnight
   let playDate = new Date(new Date(Date.now()).toDateString());
   let dateOffset = 0;
 
-  // no bulk add option for sqlite :(
-  for (let movie of movieListResponseJSON.results) {
-    if (movie.adult === false && movie.original_language === "en") {
-      const movieDetails = await fetchToJson(`/movie/${movie.id}`);
-      const movieCredits = await fetchToJson(`/movie/${movie.id}/credits`);
+  for (let page = 1; page <= 5; page++) {
+    const movieListResponseJSON = await fetchToJson(
+      `/movie/popular?language=en-US&page=${page}`,
+    );
+    // no bulk add option for sqlite :(
+    for (let movie of movieListResponseJSON.results) {
+      if (movie.adult === false && movie.original_language === "en") {
+        const movieDetails = await fetchToJson(`/movie/${movie.id}`);
+        const movieCredits = await fetchToJson(`/movie/${movie.id}/credits`);
 
-      let cast = "";
-      let genres = "";
-      let producers = "";
+        let cast = "";
+        let genres = "";
+        let producers = "";
 
-      try {
-        cast = encodeDetailsToString(movieCredits.cast.slice(0, 3), [
-          "profile_path",
-        ]);
-        genres = encodeDetailsToString(movieDetails.genres);
-        producers = encodeDetailsToString(movieDetails.production_companies, [
-          "logo_path",
-        ]);
-      } catch (error) {
-        console.error("cast, genres, or producers was empty");
+        try {
+          cast = encodeDetailsToString(movieCredits.cast.slice(0, 3), [
+            "profile_path",
+          ]);
+          genres = encodeDetailsToString(movieDetails.genres);
+          producers = encodeDetailsToString(movieDetails.production_companies, [
+            "logo_path",
+          ]);
+        } catch (error) {
+          console.error("cast, genres, or producers was empty");
+        }
+
+        await prisma.movie.create({
+          data: {
+            tmdb_id: movie.id.toString(),
+            title: movie.title,
+            tagline: movieDetails.tagline,
+            plot: movie.overview,
+            poster_path: movie.poster_path,
+            genres,
+            producers,
+            cast,
+            release_date: new Date(movie.release_date).toISOString(),
+            played: new Date(playDate.getTime() + DAY_IN_MS * dateOffset),
+          },
+        });
+
+        dateOffset += 1;
       }
-
-      await prisma.movie.create({
-        data: {
-          tmdb_id: movie.id.toString(),
-          title: movie.title,
-          tagline: movieDetails.tagline,
-          plot: movie.overview,
-          poster_path: movie.poster_path,
-          genres,
-          producers,
-          cast,
-          release_date: new Date(movie.release_date).toISOString(),
-          played: new Date(playDate.getTime() + DAY_IN_MS * dateOffset),
-        },
-      });
-
-      dateOffset += 1;
     }
   }
 
