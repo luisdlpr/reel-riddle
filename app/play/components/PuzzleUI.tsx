@@ -19,7 +19,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
       !(searchParams && searchParams.get("guest")) &&
       window.localStorage.getItem("token") == null
     ) {
-      window.location.href = "/play?guest=true";
+      window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/play?guest=true`;
     }
   }, [searchParams]);
 

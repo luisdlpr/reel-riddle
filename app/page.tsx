@@ -58,7 +58,7 @@ export default function Home() {
       .then((json) => {
         if (json.token) {
           window.localStorage.setItem("token", json.token);
-          window.location.href = "/play";
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/play`;
         }
       });
   };
@@ -75,7 +75,7 @@ export default function Home() {
       .then((json) => {
         if (json.token) {
           window.localStorage.setItem("token", json.token);
-          window.location.href = "/play";
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/play`;
         }
       });
   };
