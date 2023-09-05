@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import { Bungee } from "next/font/google";
 
+const bungee = Bungee({ subsets: ["latin"], weight: "400" });
 let md5 = require("md5");
 
 function PlayerForm({
@@ -81,7 +83,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center h-screen">
       <div className="bg-indigo-700 flex flex-col items-center justify-center text-indigo-50 p-3 rounded-xl">
-        <h1 className="text-5xl m-4">Reed Riddle 🎬</h1>
+        <h1 className={`${bungee.className} text-5xl m-4`}>Reed Riddle 🎬</h1>
         <hr className="w-full" />
         {!signup && (
           <button

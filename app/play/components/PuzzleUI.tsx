@@ -21,7 +21,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
     ) {
       window.location.href = "/play?guest=true";
     }
-  }, []);
+  }, [searchParams]);
 
   const showLeaderBoard = () => {
     toggleLeaderBoard(true);
@@ -38,7 +38,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
   };
 
   return (
-    <div className="flex sm:flex-row flex-col items-center justify-center">
+    <div className="flex sm:flex-row flex-col items-center justify-center bg-indigo-200 rounded-lg m-2 p-2 shadow-inner">
       <QuizInput
         spaceHints={puzzleData.space_hints}
         penalties={penalties}
@@ -56,17 +56,17 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
             >
               Points {Math.max(0, 10 - penalties)}
             </h1>
-            <div className="p-3 m-3 bg-indigo-700 text-indigo-50 rounded-xl inner-shadow">
+            <div className="max-w-xl p-3 m-3 bg-indigo-700 text-indigo-50 rounded-xl inner-shadow">
               <h1 className="text-xl">
                 {puzzleData.release_date.getFullYear()}
               </h1>
               <h2 className="max-w-xl">{puzzleData.tagline}</h2>
               <hr />
-              <p className="m-4 max-w-sm">
-                <i>'{puzzleData.plot}'</i>
+              <p className="m-4 w-fit">
+                <i>{`'${puzzleData.plot}'`}</i>
               </p>
             </div>
-            <div className="flex justify-center gap-2 m-4 flex-wrap max-w-sm">
+            <div className="flex items-center justify-center gap-2 m-4 flex-wrap max-w-xl">
               {puzzleData.genres.map((genre) => (
                 <span
                   key={genre}
