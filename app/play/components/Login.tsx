@@ -11,7 +11,7 @@ export default function Login() {
         onClick={() => {
           window.localStorage.removeItem("token");
           window.localStorage.removeItem("won");
-          window.location.href = "/";
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}`;
         }}
         className="p-2 m-2 bg-indigo-200 rounded-xl"
       >
