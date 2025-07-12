@@ -1,6 +1,7 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+
 import React from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 type Props = {
@@ -47,13 +48,13 @@ const QuizInput = ({
             );
         }
         if (containerDiv.current) {
-            containerDiv.current.classList.add("bg-green-200");
-            containerDiv.current.classList.remove("bg-indigo-200");
+            containerDiv.current.classList.add("bg-green-500/20");
+            containerDiv.current.classList.remove("glass-card");
         }
         if (submitButton.current) {
-            submitButton.current.classList.add("bg-green-400");
+            submitButton.current.classList.add("bg-green-500");
             submitButton.current.classList.add("disabled");
-            submitButton.current.classList.remove("bg-indigo-400");
+            submitButton.current.classList.remove("glass-button");
             submitButton.current.innerText = "Correct ✅";
             submitButton.current.onclick = null;
         }
@@ -116,19 +117,19 @@ const QuizInput = ({
             console.log("applying penalty");
             applyPenalty(parseInt(localAttempts));
         }
-    }, [applyPenalty]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const showIncorrect = () => {
         if (submitButton.current) {
-            submitButton.current.classList.add("bg-red-400");
-            submitButton.current.classList.remove("bg-indigo-400");
+            submitButton.current.classList.add("bg-red-500");
+            submitButton.current.classList.remove("glass-button");
             submitButton.current.innerText = "Incorrect ❌";
 
             setTimeout(() => {
                 if (submitButton.current) {
-                    submitButton.current.classList.add("bg-indigo-400");
-                    submitButton.current.classList.remove("bg-red-400");
-                    submitButton.current.innerText = "Lock In";
+                    submitButton.current.classList.add("glass-button");
+                    submitButton.current.classList.remove("bg-red-500");
+                    submitButton.current.innerText = "Submit Answer";
                 }
             }, 1000);
         }
@@ -277,51 +278,71 @@ const QuizInput = ({
     return (
         <div
             ref={containerDiv}
-            className="flex flex-col gap-3 items-center justify-center m-2 p-2"
+            className="glass-card p-6 space-y-6"
         >
-            <h1 className="text-xl m-3 w-80">{title !== "" ? title : "???"}</h1>
+            {/* Title Display */}
+            <div className="text-center">
+                <h1 className="text-2xl font-bold mb-2">
+                    {title !== "" ? title : "???"}
+                </h1>
+            </div>
+
+            {/* Poster Display */}
             {posterPath !== "" ? (
-                <Image
-                    src={posterPath}
-                    alt="correct answer poster"
-                    className="rounded-lg drop-shadow object-cover w-80"
-                    width={305}
-                    height={500}
-                    priority={false}
-                />
+                <div className="flex justify-center">
+                    <Image
+                        src={posterPath}
+                        alt="correct answer poster"
+                        className="rounded-lg shadow-2xl object-cover"
+                        width={305}
+                        height={500}
+                        priority={false}
+                        unoptimized={true}
+                    />
+                </div>
             ) : (
-                <div
-                    className="bg-black text-indigo-50 text-9xl flex w-80 items-center justify-center rounded-lg drop-shadow"
-                    style={{ width: "305px", height: "500px" }}
-                >
-                    ?
+                <div className="flex justify-center">
+                    <div
+                        className="glass flex items-center justify-center rounded-lg shadow-2xl text-9xl"
+                        style={{ width: "305px", height: "500px" }}
+                    >
+                        ?
+                    </div>
                 </div>
             )}
-            <div className="w-4/5 flex items-center justify-center flex-wrap">
+
+            {/* Input Grid */}
+            <div className="flex items-center justify-center flex-wrap gap-2">
                 {inputArray.map((char, index) => {
                     return char.symbol === true ? (
-                        <span className="w-4 h-4" key={index}>
-                            {" "}
-                            {char.input}{" "}
+                        <span 
+                            key={index}
+                            className="glass px-3 py-2 text-lg font-semibold rounded-lg min-w-[3rem] text-center"
+                        >
+                            {char.input}
                         </span>
                     ) : (
                         <input
-                            className="w-6 h-6 m-1 p-1 rounded drop-shadow"
+                            className="glass-input w-12 h-12 text-center text-lg font-semibold"
                             maxLength={1}
                             ref={char.ref}
                             key={index}
                             onKeyDown={(e) => handleFocus(e.keyCode, index)}
-                        ></input>
+                        />
                     );
                 })}
             </div>
-            <button
-                className="w-4/5 m-3 p-2 rounded-xl border-2 border-solid border-indigo-950 bg-indigo-400 text-indigo-50"
-                onClick={submitAnswer}
-                ref={submitButton}
-            >
-                Guess
-            </button>
+
+            {/* Submit Button */}
+            <div className="flex justify-center">
+                <button
+                    className="glass-button px-8 py-3 text-lg font-semibold"
+                    onClick={submitAnswer}
+                    ref={submitButton}
+                >
+                    Submit Answer
+                </button>
+            </div>
         </div>
     );
 };

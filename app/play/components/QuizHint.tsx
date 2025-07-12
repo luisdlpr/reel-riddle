@@ -24,20 +24,25 @@ export default function QuizHint({
   }, [applyPenalty, cost, name]);
 
   return (
-    <section>
+    <div className="glass-card p-6">
       {show ? (
-        <div className="flex flex-wrap align-center justify-center max-w-xl">
-          {info
-            .filter((element) => element.img_path)
-            .slice(0, 3)
-            .map((element) => {
-              return <HintCard key={element.name} hintInfo={element} />;
-            })}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-center capitalize">
+            {name} Information
+          </h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            {info
+              .filter((element) => element.img_path)
+              .slice(0, 3)
+              .map((element) => {
+                return <HintCard key={element.name} hintInfo={element} />;
+              })}
+          </div>
         </div>
       ) : (
-        <div>
+        <div className="text-center">
           <button
-            className="m-2 p-2 rounded-xl border-2 border-solid border-indigo-950 bg-indigo-400 text-indigo-50"
+            className="glass-button px-6 py-3 text-lg font-semibold"
             onClick={() => {
               applyPenalty(cost);
               toggleShow(true);
@@ -47,10 +52,13 @@ export default function QuizHint({
               );
             }}
           >
-            Click to show {name} info (cost {cost} points)
+            Reveal {name} info
+            <div className="text-sm text-slate-400 mt-1">
+              Cost: {cost} points
+            </div>
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }

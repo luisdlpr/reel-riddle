@@ -43,63 +43,79 @@ export default function LeaderBoard() {
   }, []);
 
   return (
-    <section className="max-w-xl flex flex-col items-center justify-center">
-      <h1 className="text-xl m-2">Top Scorers</h1>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-center text-gradient">
+        Leaderboard
+      </h2>
+      
       {leaderboard != null && (
-        <table className="min-w-fit table-fixed bg-indigo-100 shadow-lg">
-          <thead>
-            <tr>
-              <th className="bg-indigo-300 border text-left px-8 py-4">Rank</th>
-              <th className="bg-indigo-300 border text-left px-8 py-4">User</th>
-              <th className="bg-indigo-300 border text-left px-8 py-4">
-                Score
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard.map((entry) => (
-              <tr key={entry.username}>
-                <td className="border px-8 py-4 text-left">#{entry.rank}</td>
-                <td className="border px-8 py-4 text-left">{entry.username}</td>
-                <td className="border px-8 py-4 text-left">{entry.score}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="glass-card p-6">
+          <h3 className="text-lg font-semibold mb-4 text-center">Top Scorers</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-600">
+                  <th className="text-left py-3 px-4 font-semibold">Rank</th>
+                  <th className="text-left py-3 px-4 font-semibold">User</th>
+                  <th className="text-left py-3 px-4 font-semibold">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboard.map((entry, index) => (
+                  <tr 
+                    key={entry.username}
+                    className={`border-b border-slate-600/30 ${
+                      index < 3 ? 'bg-gradient-to-r from-violet-500/10 to-purple-500/10' : ''
+                    }`}
+                  >
+                    <td className="py-3 px-4">
+                      <span className={`font-bold ${
+                        index === 0 ? 'text-yellow-400' :
+                        index === 1 ? 'text-slate-300' :
+                        index === 2 ? 'text-amber-600' : 'text-slate-400'
+                      }`}>
+                        #{entry.rank}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-medium">{entry.username}</td>
+                    <td className="py-3 px-4 font-bold text-gradient">{entry.score}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
+      
       {player == null || player.response == null ? (
-        <h1 className="mt-5">Make an account to join the leaderboard!</h1>
+        <div className="glass-card p-6 text-center">
+          <p className="text-slate-300">Make an account to join the leaderboard!</p>
+        </div>
       ) : (
-        <>
-          <h1 className="text-xl mt-5 m-2">Your Rank</h1>
-          <table className="min-w-fit table-fixed bg-indigo-100 shadow-lg">
-            <thead>
-              <tr>
-                <th className="bg-indigo-300 border text-left px-8 py-4">
-                  Rank
-                </th>
-                <th className="bg-indigo-300 border text-left px-8 py-4">
-                  User
-                </th>
-                <th className="bg-indigo-300 border text-left px-8 py-4">
-                  Score
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border px-8 py-4 text-left">#{player.rank}</td>
-                <td className="border px-8 py-4 text-left">
-                  {player.response.username}
-                </td>
-                <td className="border px-8 py-4 text-left">
-                  {player.response.score}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </>
+        <div className="glass-card p-6">
+          <h3 className="text-lg font-semibold mb-4 text-center">Your Rank</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-600">
+                  <th className="text-left py-3 px-4 font-semibold">Rank</th>
+                  <th className="text-left py-3 px-4 font-semibold">User</th>
+                  <th className="text-left py-3 px-4 font-semibold">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="bg-gradient-to-r from-violet-500/20 to-purple-500/20">
+                  <td className="py-3 px-4 font-bold text-violet-400">
+                    #{player.rank}
+                  </td>
+                  <td className="py-3 px-4 font-medium">{player.response.username}</td>
+                  <td className="py-3 px-4 font-bold text-gradient">{player.response.score}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
-    </section>
+    </div>
   );
 }

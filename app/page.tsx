@@ -15,28 +15,31 @@ function PlayerForm({
   const [password, setPassword] = React.useState("");
 
   return (
-    <div className="flex flex-col items-center justify-center w-full text-indigo-950">
+    <div className="flex flex-col items-center justify-center w-full space-y-4 fade-in">
       <input
-        className="m-1 w-full rounded-xl p-1"
-        placeholder="username"
+        className="glass-input w-full px-4 py-3 text-lg"
+        placeholder="Username"
+        value={username}
         onChange={(e) => {
           setUsername(e.target.value);
         }}
       />
       <input
-        className="m-1 w-full rounded-xl p-1"
-        placeholder="password"
+        className="glass-input w-full px-4 py-3 text-lg"
+        type="password"
+        placeholder="Password"
+        value={password}
         onChange={(e) => {
           setPassword(e.target.value);
         }}
       />
       <button
-        className="m-1 w-full rounded-xl p-1 bg-indigo-100"
+        className="glass-button w-full px-6 py-3 text-lg font-semibold text-gradient"
         onClick={() => {
           handleSubmit({ username, password });
         }}
       >
-        Submit
+        Continue
       </button>
     </div>
   );
@@ -81,40 +84,50 @@ export default function Home() {
   };
 
   return (
-    <main className="m-4 flex flex-col items-center justify-center h-screen">
-      <div className="bg-indigo-700 flex flex-col items-center justify-center text-indigo-50 p-3 rounded-xl">
-        <h1 className={`${bungee.className} text-center text-5xl m-4`}>
-          Reed Riddle 🎬
-        </h1>
-        <hr className="w-full" />
-        {!signup && (
-          <button
-            className="p-2 m-2 w-full rounded-xl bg-indigo-100 text-indigo-950"
-            onClick={() => toggleLogin((prev) => !prev)}
-          >
-            Log In
-          </button>
-        )}
-        {login && <PlayerForm handleSubmit={loginHandler} />}
-        {!login && (
-          <button
-            className="p-2 m-2 w-full rounded-xl bg-indigo-100 text-indigo-950"
-            onClick={() => toggleSignup((prev) => !prev)}
-          >
-            Sign Up
-          </button>
-        )}
-        {signup && <PlayerForm handleSubmit={signupHandler} />}
-        {!(signup || login) && (
-          <button
-            className="p-2 m-2 w-full rounded-xl bg-indigo-100 text-indigo-950"
-            onClick={() =>
-              (window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/play?guest=true`)
-            }
-          >
-            Continue As Guest (Score will not be saved)
-          </button>
-        )}
+    <main className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="glass-card p-8 max-w-md w-full space-y-6 fade-in">
+        <div className="text-center space-y-2">
+          <h1 className={`${bungee.className} text-5xl text-gradient mb-2`}>
+            Reel Riddle
+          </h1>
+          <p className="text-slate-300 text-lg">🎬 Daily Movie Guessing Game</p>
+        </div>
+        
+        <div className="space-y-4">
+          {!signup && (
+            <button
+              className="glass-button w-full px-6 py-3 text-lg font-semibold"
+              onClick={() => toggleLogin((prev) => !prev)}
+            >
+              {login ? "Cancel" : "Log In"}
+            </button>
+          )}
+          
+          {login && <PlayerForm handleSubmit={loginHandler} />}
+          
+          {!login && (
+            <button
+              className="glass-button w-full px-6 py-3 text-lg font-semibold"
+              onClick={() => toggleSignup((prev) => !prev)}
+            >
+              {signup ? "Cancel" : "Sign Up"}
+            </button>
+          )}
+          
+          {signup && <PlayerForm handleSubmit={signupHandler} />}
+          
+          {!(signup || login) && (
+            <button
+              className="glass-button w-full px-6 py-3 text-lg font-semibold border-gradient"
+              onClick={() =>
+                (window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/play?guest=true`)
+              }
+            >
+              Continue As Guest
+              <div className="text-sm text-slate-400 mt-1">Score will not be saved</div>
+            </button>
+          )}
+        </div>
       </div>
     </main>
   );

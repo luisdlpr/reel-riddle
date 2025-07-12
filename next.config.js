@@ -2,6 +2,16 @@
 const nextConfig = {
     basePath: process.env.NEXT_PUBLIC_BASE_URL ? 
         (new URL(process.env.NEXT_PUBLIC_BASE_URL).pathname === '/' ? '' : new URL(process.env.NEXT_PUBLIC_BASE_URL).pathname) : '',
+    async redirects() {
+        return ([
+            {
+                source: '/',
+                destination: '/myapp',
+                permanent: true,
+                basePath: false,
+            },
+        ]);
+    },
     images: {
         domains: ["image.tmdb.org"],
         remotePatterns: [
