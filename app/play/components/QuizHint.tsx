@@ -21,7 +21,7 @@ export default function QuizHint({
       applyPenalty(cost);
       toggleShow(true);
     }
-  }, []);
+  }, [applyPenalty, cost, name]);
 
   return (
     <section>

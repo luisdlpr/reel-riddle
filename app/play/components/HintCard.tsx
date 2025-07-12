@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function HintCard({
   hintInfo,
 }: {
@@ -5,9 +7,13 @@ export default function HintCard({
 }) {
   return (
     <div className="flex flex-col w-1/4 m-2 p-2 rounded-xl bg-indigo-700 align-center justify-center">
-      <img
+      <Image
         className="rounded-xl"
         src={"https://image.tmdb.org/t/p/w500" + hintInfo.img_path}
+        alt={`${hintInfo.name} photo`}
+        width={500}
+        height={750}
+        style={{ width: 'auto', height: 'auto' }}
       />
       <h2 className="text-indigo-50 m-2 text-wrap text-sm text-align-center">
         {hintInfo.name}

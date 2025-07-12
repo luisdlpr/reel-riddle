@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import React from "react";
+import Image from "next/image";
 
 type Props = {
     spaceHints: spaceHintsInt;
@@ -34,7 +35,7 @@ const QuizInput = ({
     const submitButton = React.useRef<HTMLButtonElement>(null);
     const searchParams = useSearchParams();
 
-    const setWin = (setLocal: boolean, title?: string, posterPath?: string) => {
+    const setWin = React.useCallback((setLocal: boolean, title?: string, posterPath?: string) => {
         if (setLocal && title && posterPath) {
             window.localStorage.setItem(
                 "won",
@@ -58,7 +59,7 @@ const QuizInput = ({
         }
         setWinState(true);
         showLeaderBoard();
-    };
+    }, [showLeaderBoard, setWinState]);
 
     React.useEffect(() => {
         setInputArray(generateInputArray(spaceHints));
@@ -104,7 +105,7 @@ const QuizInput = ({
             setTitle(lastWinJSON.title);
             setPosterPath(lastWinJSON.posterPath);
         }
-    }, [applyPenalty, searchParams, spaceHints]);
+    }, [searchParams, spaceHints, setWin]);
 
     React.useEffect(() => {
         let localAttempts = window.localStorage.getItem(
@@ -115,7 +116,7 @@ const QuizInput = ({
             console.log("applying penalty");
             applyPenalty(parseInt(localAttempts));
         }
-    }, []);
+    }, [applyPenalty]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const showIncorrect = () => {
         if (submitButton.current) {
@@ -280,12 +281,12 @@ const QuizInput = ({
         >
             <h1 className="text-xl m-3 w-80">{title !== "" ? title : "???"}</h1>
             {posterPath !== "" ? (
-                <img
+                <Image
                     src={posterPath}
                     alt="correct answer poster"
                     className="rounded-lg drop-shadow object-cover w-80"
-                    width={"305px"}
-                    height={"500px"}
+                    width={305}
+                    height={500}
                     style={{ width: "305px", height: "500px" }}
                 />
             ) : (

@@ -23,11 +23,11 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
     }
   }, [searchParams]);
 
-  const showLeaderBoard = () => {
+  const showLeaderBoard = React.useCallback(() => {
     toggleLeaderBoard(true);
-  };
+  }, [toggleLeaderBoard]);
 
-  const applyPenalty = (amount: number) => {
+  const applyPenalty = React.useCallback((amount: number) => {
     pointsIndicator.current?.classList.add("bg-red-700");
     pointsIndicator.current?.classList.add("animate-ping");
     setTimeout(() => {
@@ -35,7 +35,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
       pointsIndicator.current?.classList.remove("bg-red-700");
       pointsIndicator.current?.classList.remove("animate-ping");
     }, 1000);
-  };
+  }, [setPenalties]);
 
   return (
     <div className="flex sm:flex-row flex-col items-center justify-center bg-indigo-200 rounded-lg m-2 p-2 shadow-inner">
