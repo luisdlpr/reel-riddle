@@ -100,7 +100,7 @@ export const pullMovies = async (res?: NextApiResponse) => {
   }
 
   if (res) {
-    res.status(200).json({ response: "access granted" });
+    res.status(200).json({ response: new Date(Date.now()).toDateString() });
   }
 };
 
