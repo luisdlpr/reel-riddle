@@ -51,7 +51,7 @@ export default function Home() {
         {puzzle === undefined && (
           <div className="glass-card p-12 text-center">
             <div className="pulse text-2xl mb-4">🎬</div>
-            <p className="text-slate-300">Loading today's puzzle...</p>
+            <p className="text-slate-300">Loading today&apos;s puzzle...</p>
           </div>
         )}
       </div>

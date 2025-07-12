@@ -75,7 +75,7 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
                   {puzzleData.release_date.getFullYear()}
                 </h2>
                 <p className="text-slate-300 italic text-lg">
-                  "{puzzleData.tagline}"
+                  &ldquo;{puzzleData.tagline}&rdquo;
                 </p>
               </div>
               
