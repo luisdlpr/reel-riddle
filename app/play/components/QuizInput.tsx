@@ -287,7 +287,7 @@ const QuizInput = ({
                     className="rounded-lg drop-shadow object-cover w-80"
                     width={305}
                     height={500}
-                    style={{ width: "305px", height: "500px" }}
+                    priority={false}
                 />
             ) : (
                 <div
