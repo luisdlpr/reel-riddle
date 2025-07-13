@@ -11,7 +11,10 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
   const puzzleData = new Puzzle(puzzleJSON);
   const [penalties, setPenalties] = React.useState<number>(0);
   const [leaderboard, toggleLeaderBoard] = React.useState<boolean>(false);
+  const [rightColumnHeight, setRightColumnHeight] = React.useState<number | null>(null);
+  const [isLargeScreen, setIsLargeScreen] = React.useState<boolean>(false);
   const pointsIndicator = React.useRef<HTMLHeadingElement>(null);
+  const quizInputRef = React.useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
 
   React.useEffect(() => {
@@ -37,10 +40,41 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
     }, 1000);
   }, [setPenalties]);
 
+  // Check screen size and measure quiz input panel height for large screens
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024); // lg breakpoint is 1024px
+    };
+
+    const updateHeight = () => {
+      if (quizInputRef.current && isLargeScreen) {
+        const height = quizInputRef.current.offsetHeight;
+        setRightColumnHeight(height);
+      } else {
+        setRightColumnHeight(null);
+      }
+    };
+
+    // Initial check and measurement
+    checkScreenSize();
+    updateHeight();
+
+    // Update on window resize
+    const handleResize = () => {
+      checkScreenSize();
+      updateHeight();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, [puzzleData, penalties, leaderboard, isLargeScreen]);
+
   return (
-    <div className="grid lg:grid-cols-2 gap-8">
+    <div className="grid lg:grid-cols-2 gap-8 items-start">
       {/* Left Column - Quiz Input */}
-      <div className="glass-card p-6">
+      <div ref={quizInputRef} className="glass-card p-6 h-fit">
         <QuizInput
           spaceHints={puzzleData.space_hints}
           penalties={penalties}
@@ -50,7 +84,12 @@ export default function PuzzleUI({ puzzleJSON }: { puzzleJSON: {} }) {
       </div>
 
       {/* Right Column - Game Info */}
-      <div className="space-y-6">
+      <div 
+        className="space-y-6 overflow-y-auto game-info-scrollbar pr-2"
+        style={{ 
+          maxHeight: isLargeScreen && rightColumnHeight ? `${rightColumnHeight}px` : 'none'
+        }}
+      >
         {leaderboard ? (
           <div className="glass-card p-6">
             <LeaderBoard />

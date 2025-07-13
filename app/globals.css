@@ -120,6 +120,24 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* Game info scrollbar - more subtle */
+.game-info-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.game-info-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.game-info-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(var(--glass-border), 0.5);
+  border-radius: 3px;
+}
+
+.game-info-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--glass-border), 0.8);
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {

@@ -6,7 +6,7 @@ const nextConfig = {
         return ([
             {
                 source: '/',
-                destination: '/myapp',
+                destination: '/reel-riddle',
                 permanent: true,
                 basePath: false,
             },

@@ -202,7 +202,13 @@ const QuizInput = ({
 
         // for any nonAlpha characters, replace with a prefilled
         for (let hint of spaceHints.nonAlphas) {
-            inputArray[hint.idx] = { symbol: true, input: hint.symbol };
+            if (hint.symbol === ' ' || hint.symbol === '-') {
+                // Mark spaces and dashes as gaps (no input field)
+                inputArray[hint.idx] = { symbol: false, input: hint.symbol };
+            } else {
+                // Other symbols get prefilled
+                inputArray[hint.idx] = { symbol: true, input: hint.symbol };
+            }
         }
 
         return inputArray;
@@ -267,9 +273,9 @@ const QuizInput = ({
         const getValueFromRef = (inputElement: inputArrayInt) => {
             const ref = inputElement.ref || null;
             if (ref && ref.current) {
-                return ref.current.value;
+                return ref.current.value.toLowerCase(); // Convert to lowercase
             } else {
-                return inputElement.input;
+                return inputElement.input.toLowerCase(); // Convert to lowercase
             }
         };
         return inputArray.map(getValueFromRef).join("");
@@ -312,8 +318,23 @@ const QuizInput = ({
             )}
 
             {/* Input Grid */}
-            <div className="flex items-center justify-center flex-wrap gap-2">
+            <div className="flex items-center justify-center flex-wrap gap-1 mb-4">
+                <div className="w-full text-center mb-2">
+                    <p className="text-slate-400 text-sm">Fill in the movie title</p>
+                </div>
                 {inputArray.map((char, index) => {
+                    // Handle spaces as gaps (no input field)
+                    if (char.input === ' ' || char.input === '-') {
+                        return (
+                            <div 
+                                key={index}
+                                className="w-12 h-12 flex items-center justify-center"
+                            >
+                                <div className="w-6 h-0.5 bg-slate-500 rounded-full opacity-60"></div>
+                            </div>
+                        );
+                    }
+                    
                     return char.symbol === true ? (
                         <span 
                             key={index}
@@ -323,11 +344,37 @@ const QuizInput = ({
                         </span>
                     ) : (
                         <input
-                            className="glass-input w-12 h-12 text-center text-lg font-semibold"
+                            className="glass-input w-12 h-12 text-center text-lg font-semibold uppercase"
                             maxLength={1}
                             ref={char.ref}
                             key={index}
                             onKeyDown={(e) => handleFocus(e.keyCode, index)}
+                            onInput={(e) => {
+                                // Convert to uppercase for display, but store as lowercase
+                                const target = e.target as HTMLInputElement;
+                                const value = target.value.toUpperCase();
+                                target.value = value;
+                                
+                                // Auto-advance to next input if character entered
+                                if (value && index < inputArray.length - 1) {
+                                    setTimeout(() => {
+                                        // Find next input field (skip gaps and symbols)
+                                        let nextIndex = index + 1;
+                                        while (nextIndex < inputArray.length) {
+                                            const nextChar = inputArray[nextIndex];
+                                            if (!nextChar.symbol && nextChar.input !== ' ' && nextChar.input !== '-') {
+                                                const nextInput = nextChar.ref?.current;
+                                                if (nextInput) {
+                                                    nextInput.focus();
+                                                    break;
+                                                }
+                                            }
+                                            nextIndex++;
+                                        }
+                                    }, 10);
+                                }
+                            }}
+                            placeholder=""
                         />
                     );
                 })}
