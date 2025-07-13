@@ -13,7 +13,7 @@ export default function Login() {
           window.localStorage.removeItem("won");
           window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}`;
         }}
-        className="p-2 m-2 bg-indigo-200 rounded-xl"
+        className="glass-button px-4 py-2 text-sm font-medium"
       >
         {searchParams && searchParams.get("guest")
           ? "Sign Up or Log In"

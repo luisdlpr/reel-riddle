@@ -1,6 +1,8 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+
 import React from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 type Props = {
     spaceHints: spaceHintsInt;
@@ -34,7 +36,7 @@ const QuizInput = ({
     const submitButton = React.useRef<HTMLButtonElement>(null);
     const searchParams = useSearchParams();
 
-    const setWin = (setLocal: boolean, title?: string, posterPath?: string) => {
+    const setWin = React.useCallback((setLocal: boolean, title?: string, posterPath?: string) => {
         if (setLocal && title && posterPath) {
             window.localStorage.setItem(
                 "won",
@@ -46,19 +48,19 @@ const QuizInput = ({
             );
         }
         if (containerDiv.current) {
-            containerDiv.current.classList.add("bg-green-200");
-            containerDiv.current.classList.remove("bg-indigo-200");
+            containerDiv.current.classList.add("bg-green-500/20");
+            containerDiv.current.classList.remove("glass-card");
         }
         if (submitButton.current) {
-            submitButton.current.classList.add("bg-green-400");
+            submitButton.current.classList.add("bg-green-500");
             submitButton.current.classList.add("disabled");
-            submitButton.current.classList.remove("bg-indigo-400");
+            submitButton.current.classList.remove("glass-button");
             submitButton.current.innerText = "Correct ✅";
             submitButton.current.onclick = null;
         }
         setWinState(true);
         showLeaderBoard();
-    };
+    }, [showLeaderBoard, setWinState]);
 
     React.useEffect(() => {
         setInputArray(generateInputArray(spaceHints));
@@ -104,7 +106,7 @@ const QuizInput = ({
             setTitle(lastWinJSON.title);
             setPosterPath(lastWinJSON.posterPath);
         }
-    }, [applyPenalty, searchParams, spaceHints]);
+    }, [searchParams, spaceHints, setWin]);
 
     React.useEffect(() => {
         let localAttempts = window.localStorage.getItem(
@@ -115,19 +117,19 @@ const QuizInput = ({
             console.log("applying penalty");
             applyPenalty(parseInt(localAttempts));
         }
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const showIncorrect = () => {
         if (submitButton.current) {
-            submitButton.current.classList.add("bg-red-400");
-            submitButton.current.classList.remove("bg-indigo-400");
+            submitButton.current.classList.add("bg-red-500");
+            submitButton.current.classList.remove("glass-button");
             submitButton.current.innerText = "Incorrect ❌";
 
             setTimeout(() => {
                 if (submitButton.current) {
-                    submitButton.current.classList.add("bg-indigo-400");
-                    submitButton.current.classList.remove("bg-red-400");
-                    submitButton.current.innerText = "Lock In";
+                    submitButton.current.classList.add("glass-button");
+                    submitButton.current.classList.remove("bg-red-500");
+                    submitButton.current.innerText = "Submit Answer";
                 }
             }, 1000);
         }
@@ -200,7 +202,13 @@ const QuizInput = ({
 
         // for any nonAlpha characters, replace with a prefilled
         for (let hint of spaceHints.nonAlphas) {
-            inputArray[hint.idx] = { symbol: true, input: hint.symbol };
+            if (hint.symbol === ' ' || hint.symbol === '-') {
+                // Mark spaces and dashes as gaps (no input field)
+                inputArray[hint.idx] = { symbol: false, input: hint.symbol };
+            } else {
+                // Other symbols get prefilled
+                inputArray[hint.idx] = { symbol: true, input: hint.symbol };
+            }
         }
 
         return inputArray;
@@ -265,9 +273,9 @@ const QuizInput = ({
         const getValueFromRef = (inputElement: inputArrayInt) => {
             const ref = inputElement.ref || null;
             if (ref && ref.current) {
-                return ref.current.value;
+                return ref.current.value.toLowerCase(); // Convert to lowercase
             } else {
-                return inputElement.input;
+                return inputElement.input.toLowerCase(); // Convert to lowercase
             }
         };
         return inputArray.map(getValueFromRef).join("");
@@ -276,51 +284,112 @@ const QuizInput = ({
     return (
         <div
             ref={containerDiv}
-            className="flex flex-col gap-3 items-center justify-center m-2 p-2"
+            className="glass-card p-6 space-y-6"
         >
-            <h1 className="text-xl m-3 w-80">{title !== "" ? title : "???"}</h1>
+            {/* Title Display */}
+            <div className="text-center">
+                <h1 className="text-2xl font-bold mb-2">
+                    {title !== "" ? title : "???"}
+                </h1>
+            </div>
+
+            {/* Poster Display */}
             {posterPath !== "" ? (
-                <img
-                    src={posterPath}
-                    alt="correct answer poster"
-                    className="rounded-lg drop-shadow object-cover w-80"
-                    width={"305px"}
-                    height={"500px"}
-                    style={{ width: "305px", height: "500px" }}
-                />
+                <div className="flex justify-center">
+                    <Image
+                        src={posterPath}
+                        alt="correct answer poster"
+                        className="rounded-lg shadow-2xl object-cover"
+                        width={305}
+                        height={500}
+                        priority={false}
+                        unoptimized={true}
+                    />
+                </div>
             ) : (
-                <div
-                    className="bg-black text-indigo-50 text-9xl flex w-80 items-center justify-center rounded-lg drop-shadow"
-                    style={{ width: "305px", height: "500px" }}
-                >
-                    ?
+                <div className="flex justify-center">
+                    <div
+                        className="glass flex items-center justify-center rounded-lg shadow-2xl text-9xl"
+                        style={{ width: "305px", height: "500px" }}
+                    >
+                        ?
+                    </div>
                 </div>
             )}
-            <div className="w-4/5 flex items-center justify-center flex-wrap">
+
+            {/* Input Grid */}
+            <div className="flex items-center justify-center flex-wrap gap-1 mb-4">
+                <div className="w-full text-center mb-2">
+                    <p className="text-slate-400 text-sm">Fill in the movie title</p>
+                </div>
                 {inputArray.map((char, index) => {
+                    // Handle spaces as gaps (no input field)
+                    if (char.input === ' ' || char.input === '-') {
+                        return (
+                            <div 
+                                key={index}
+                                className="w-12 h-12 flex items-center justify-center"
+                            >
+                                <div className="w-6 h-0.5 bg-slate-500 rounded-full opacity-60"></div>
+                            </div>
+                        );
+                    }
+                    
                     return char.symbol === true ? (
-                        <span className="w-4 h-4" key={index}>
-                            {" "}
-                            {char.input}{" "}
+                        <span 
+                            key={index}
+                            className="glass px-3 py-2 text-lg font-semibold rounded-lg min-w-[3rem] text-center"
+                        >
+                            {char.input}
                         </span>
                     ) : (
                         <input
-                            className="w-6 h-6 m-1 p-1 rounded drop-shadow"
+                            className="glass-input w-12 h-12 text-center text-lg font-semibold uppercase"
                             maxLength={1}
                             ref={char.ref}
                             key={index}
                             onKeyDown={(e) => handleFocus(e.keyCode, index)}
-                        ></input>
+                            onInput={(e) => {
+                                // Convert to uppercase for display, but store as lowercase
+                                const target = e.target as HTMLInputElement;
+                                const value = target.value.toUpperCase();
+                                target.value = value;
+                                
+                                // Auto-advance to next input if character entered
+                                if (value && index < inputArray.length - 1) {
+                                    setTimeout(() => {
+                                        // Find next input field (skip gaps and symbols)
+                                        let nextIndex = index + 1;
+                                        while (nextIndex < inputArray.length) {
+                                            const nextChar = inputArray[nextIndex];
+                                            if (!nextChar.symbol && nextChar.input !== ' ' && nextChar.input !== '-') {
+                                                const nextInput = nextChar.ref?.current;
+                                                if (nextInput) {
+                                                    nextInput.focus();
+                                                    break;
+                                                }
+                                            }
+                                            nextIndex++;
+                                        }
+                                    }, 10);
+                                }
+                            }}
+                            placeholder=""
+                        />
                     );
                 })}
             </div>
-            <button
-                className="w-4/5 m-3 p-2 rounded-xl border-2 border-solid border-indigo-950 bg-indigo-400 text-indigo-50"
-                onClick={submitAnswer}
-                ref={submitButton}
-            >
-                Guess
-            </button>
+
+            {/* Submit Button */}
+            <div className="flex justify-center">
+                <button
+                    className="glass-button px-8 py-3 text-lg font-semibold"
+                    onClick={submitAnswer}
+                    ref={submitButton}
+                >
+                    Submit Answer
+                </button>
+            </div>
         </div>
     );
 };

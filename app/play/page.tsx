@@ -7,21 +7,6 @@ import { Bungee } from "next/font/google";
 
 const bungee = Bungee({ subsets: ["latin"], weight: "400" });
 
-// const getPuzzle = async () => {
-//   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/play`, {
-//     method: "GET",
-//     cache: "no-store",
-//   });
-//
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch data");
-//   }
-//
-//   const puzzleJSON = await res.json();
-//
-//   return { puzzleJSON };
-// };
-
 export default function Home() {
   const [puzzle, setPuzzle] = React.useState<{}>();
 
@@ -42,12 +27,34 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="text-center flex flex-col items-center">
-      <div className="max-w-xl flex flex-wrap items-center justify-center">
-        <h1 className={`${bungee.className} text-4xl m-4`}>Reed Riddle 🎬</h1>
-        <Login />
+    <main className="min-h-screen p-6">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="glass-card p-6 text-center fade-in">
+          <h1 className={`${bungee.className} text-4xl text-gradient mb-2`}>
+            Reel Riddle 🎬
+          </h1>
+          <p className="text-slate-300">Daily Movie Guessing Challenge</p>
+          <div className="mt-4">
+            <Login />
+          </div>
+        </div>
+        
+        {/* Game Content */}
+        {puzzle != undefined && (
+          <div className="slide-in">
+            <PuzzleUI puzzleJSON={puzzle} />
+          </div>
+        )}
+        
+        {/* Loading State */}
+        {puzzle === undefined && (
+          <div className="glass-card p-12 text-center">
+            <div className="pulse text-2xl mb-4">🎬</div>
+            <p className="text-slate-300">Loading today&apos;s puzzle...</p>
+          </div>
+        )}
       </div>
-      {puzzle != undefined && <PuzzleUI puzzleJSON={puzzle} />}
     </main>
   );
 }
